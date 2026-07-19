@@ -9,6 +9,9 @@
 **Problem summary:**
 In this case, the /health endpoint should verify the app and its DB connection are working. It uses SQL to test the DB as "SELECT 1", but the version of SQLAlchemy here does not allow the direct use of raw strings for queries. Because of this, the DB check throws an error every time as it always shows the DB as “down”, even when is running fine. The part of the codebase that this exists is in api/routes/health.py in the DB probe portion of the health check logic. An ideal solution will make the DB check run successfully and return the actual running status of the DB connection.
 
+**Selection reasoning:**
+I chose Tier 1 because this is my first time working in a large and unfamiliar codebase. Moreover, this particular issue is relatively easy to fix since it is isolated to one file (api/routes/health.py) with a clear cause, so I could describe the before/after without much digging. Given the 3 to 6 hours estimate for Tier 1 work, I'm confident this fits comfortably within the Week 8–9 timeline.
+
 **Branch name:** fix/154-health-check-sql-text
 
 **Setup confirmation:** [x] App runs locally at localhost:5173
