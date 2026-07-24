@@ -4,7 +4,7 @@
 
 **Issue title:** Health check DB probe passes a raw SQL string, which fails under SQLAlchemy 2.x
 
-**Tier:** [x] Tier 1  [ ] Tier 2  [ ] Tier 3
+**Tier:** [x] Tier 1 [ ] Tier 2 [ ] Tier 3
 
 **Problem summary:**
 In this case, the /health endpoint should verify the app and its DB connection are working. It uses SQL to test the DB as "SELECT 1", but the version of SQLAlchemy here does not allow the direct use of raw strings for queries. Because of this, the DB check throws an error every time as it always shows the DB as “down”, even when is running fine. The part of the codebase that this exists is in api/routes/health.py in the DB probe portion of the health check logic. An ideal solution will make the DB check run successfully and return the actual running status of the DB connection.
@@ -17,3 +17,23 @@ I chose Tier 1 because this is my first time working in a large and unfamiliar c
 **Setup confirmation:** [x] App runs locally at localhost:5173
 
 **Cohort ledger:** [x] Issue added to cohort ledger
+
+## Week 8 — Reproduction & solution planning — Issue #154
+
+**Reproduction summary:**
+I reproduced the bug by running the app locally in Docker using `make run` and then, calling `GET /health` (`curl http://localhost:8000/health` as per the SETUP.md). Postgres was healthy in the container, but the endpoint still returned a 503 with `postgres: "unhealthy"` in the `dependencies` object, confirming the raw SQL string issue described in the issue. In this case, this is the exact output:
+
+```json
+{"detail":
+    {"status":"unhealthy","dependencies":
+        {
+            "postgres":"unhealthy","redis":"unhealthy","vector_db":"healthy"
+        },
+    "safety_events_last_hour":0,"timestamp":"2026-07-24T21:04:44.544803"}
+}
+```
+
+**PLAN.md link:** https://github.com/Andresc06/pathreview/blob/fix/154-health-check-sql-text/PLAN.md
+
+**Blockers or open questions:**
+Still need to confirm the fix works against a real Postgres connection in Docker (not just my isolated reproduction script), and I'm deciding whether to add a new test file (tests/unit/test_health.py) before opening the PR, since one doesn't currently exist for this route.
