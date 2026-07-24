@@ -20,6 +20,8 @@ I chose Tier 1 because this is my first time working in a large and unfamiliar c
 
 ## Week 8 — Reproduction & solution planning — Issue #154
 
+**Reproduction commit link:** https://github.com/Andresc06/pathreview/commit/5a097c5
+
 **Reproduction summary:**
 I reproduced the bug by running the app locally in Docker using `make run` and then, calling `GET /health` (`curl http://localhost:8000/health` as per the SETUP.md). Postgres was healthy in the container, but the endpoint still returned a 503 with `postgres: "unhealthy"` in the `dependencies` object, confirming the raw SQL string issue described in the issue. In this case, this is the exact output:
 
