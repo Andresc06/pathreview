@@ -25,9 +25,13 @@ class TestHealthCheck:
     ) -> None:
         """When db.execute succeeds, postgres should be reported as healthy."""
         try:
-            result = await health_check(db=mock_db_session)
+            result = await health_check(db=mock_db_session)  # type: ignore[arg-type]
         except HTTPException as exc:
             result = exc.detail
+
+        mock_db_session.execute.assert_awaited_once()
+        stmt = mock_db_session.execute.call_args.args[0]
+        assert getattr(stmt, "text", None) == "SELECT 1"
 
         assert result["dependencies"]["postgres"] == "healthy"
 
