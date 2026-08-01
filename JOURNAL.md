@@ -39,3 +39,17 @@ I reproduced the bug by running the app locally in Docker using `make run` and t
 
 **Blockers or open questions:**
 Still need to confirm the fix works against a real Postgres connection in Docker (not just my isolated reproduction script), and I'm deciding whether to add a new test file (tests/unit/test_health.py) before opening the PR, since one doesn't currently exist for this route.
+
+## Week 9 — Solution building & PR submission
+
+### Check-in 1 (mid-week)
+
+**Current progress:**
+I was able to implement the the fix from my plan which was the wrapping of the raw SQL string in `sqlalchemy.text()` (`api/routes/health.py`). Then, I ran the reproduction script again and confirmed the `ArgumentError` is gone. And finally, I added `tests/unit/test_health.py` with two tests covering the healthy and unhealthy cases for the Postgres probe.
+
+**Next steps:**
+Now i need to make sure the fix works (not just mocks), run a full self-review comparing `make check` and `make test-unit` before/after my change, and open the PR.
+
+**Blockers:**
+None.
+
