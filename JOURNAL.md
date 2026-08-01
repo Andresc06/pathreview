@@ -53,3 +53,20 @@ Now i need to make sure the fix works (not just mocks), run a full self-review c
 **Blockers:**
 None.
 
+---
+
+### Check-in 2 (end of week)
+
+**PR link:** https://github.com/ascherj/pathreview/pull/523
+
+**Branch:** fix/154-health-check-sql-text
+
+**What you built:**
+Fixed the `/health` endpoint's Postgres probe by wrapping the raw SQL string in `sqlalchemy.text()`. SQLAlchemy 2.x rejects raw strings unless wrapped in `sqlalchemy.text()`. The change made was `text("SELECT 1")`, rather than "SELECT 1". I also added type annotations to `health_check()` (a return type and an explicit type for the `health_status` dict) since the pre-commit `mypy` hook was blocking my commit on pre-existing untyped code in this same function.
+
+**Tests added or updated:**
+Added `tests/unit/test_health.py` since no tests existed for this route before, with two tests: one confirming Postgres reports "healthy" when the query succeeds, and one confirming it reports "unhealthy" with a 503 when the query raises.
+
+**Self-review confirmation:** [x] make check passes  [x] make test-unit passes
+
+**Draft PR feedback received from:** none
