@@ -70,3 +70,34 @@ Added `tests/unit/test_health.py` since no tests existed for this route before, 
 **Self-review confirmation:** [x] make check passes  [x] make test-unit passes
 
 **Draft PR feedback received from:** none
+
+## Week 10 — Iteration & reflection
+
+### Reviewer feedback
+
+**Feedback received:** [x] Yes  [ ] No
+
+**Summary of feedback:**
+Github Copilot commented on my PR. It flagged that my tests mock `db.execute()` without verifying it was called with a wrapped `sqlalchemy.text()` statement, which meant that if someone regressed the fix back to a raw string, my tests would still pass. It suggested asserting on the actual call argument's `.text` value.
+
+**How you responded:**
+The AI assistant suggested to assert that `db.execute()` was actually called with a `text("SELECT 1")` statement, not just any argument, plus a `type: ignore` for mypy. I accepted that suggested fix.
+
+---
+
+### Reflection
+
+**What was harder than you expected?**
+Definitely getting my local environment stable. I ran into a leftover `uvicorn` process from an earlier session that was still running old code and made it look like my fix caused a new error, when it hadn't. Moreover, I also needed to make sure not to modify the existing `health_check()` function too much, since it was already a bit messy and I didn't want to introduce new bugs.
+
+**What did you learn about working in a large codebase?**
+There's already a lot of unrelated bugs sitting in the same files I was touching. I learned that my job wasn't to fix all of that, but to focus on the specific issue at hand. I needed to make sure my specific change didn't add to it, and to be upfront in my PR about what already existed before I got there.
+
+**How did AI tools help — and where did they fall short?**
+AI was most useful for explaining why the bug happened. Actually it helped me reproduce it without needing the full Docker stack running. Where it fell short was writing tests that were more advanced than I could confidently explain myself, so I had to ask for a simpler version so I actually understood the solution, instead of just accepting AI output at face value.
+
+**What would you do differently if you started over?**
+I'd check for old leftover processes earlier instead of assuming my code was broken when I got an unexpected error. I'd also decide on my test strategy once and stick with it, instead of writing a stricter test, simplifying it, then getting feedback asking for the stricter version back.
+
+**What are you most proud of from this module?**
+Figuring out I could reproduce the bug without the need of Docker by pointing SQLAlchemy at a fake connection string, so I got a fast way to prove the bug existed and later confirm the fix worked.
